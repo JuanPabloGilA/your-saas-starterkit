@@ -2,6 +2,10 @@
 
 A production-ready monorepo template built with Turborepo, featuring an Astro marketing site, a React dashboard, an Elysia API, and shared packages. Perfect for building scalable full-stack SaaS applications with modern tooling.
 
+## Used By
+
+- [leviathanwar.com](https://leviathanwar.com/)
+
 ## 🚀 Quick Start
 
 ```bash
