@@ -5,7 +5,7 @@ A production-ready monorepo template built with Turborepo, featuring an Astro ma
 ## 🚀 Quick Start
 
 ```bash
-npx create-your-saas-starterkit
+npx create-your-saas-boilerplate
 ```
 
 Get started in seconds with our interactive CLI tool! It will scaffold the entire monorepo with your custom configuration.
@@ -49,7 +49,7 @@ project/
 The fastest way to get started is using our CLI tool:
 
 ```bash
-npx create-your-saas-starterkit
+npx create-your-saas-boilerplate
 ```
 
 This will:
@@ -61,17 +61,19 @@ This will:
 **Alternative package managers:**
 ```bash
 # Using npm
-npm create your-saas-starterkit
+npm create your-saas-boilerplate
 
 # Using bun
-bunx create-your-saas-starterkit
+bunx create-your-saas-boilerplate
 ```
 
 After creation:
 ```bash
 cd your-project-name
-cp env.example .env
-# Edit .env with your database URL and secrets
+cp apps/api/.env.example apps/api/.env
+cp apps/web/.env.example apps/web/.env
+cp apps/landing/.env.example apps/landing/.env
+# Edit with your database URL and secrets
 bun run dev
 ```
 
@@ -93,8 +95,10 @@ cd your-saas-starterkit
 bun install
 
 # Set up environment variables
-cp env.example .env
-# Edit .env with your database URL and other secrets
+cp apps/api/.env.example apps/api/.env
+cp apps/web/.env.example apps/web/.env
+cp apps/landing/.env.example apps/landing/.env
+# Edit with your database URL and other secrets
 ```
 
 ### Development
@@ -204,14 +208,14 @@ bun run db:migrate
 **If using the CLI (recommended):**
 The CLI automatically handles package naming and setup. You only need to:
 
-1. **Environment variables**: Copy `.env.example` to `.env` and configure your settings
+1. **Environment variables**: Copy each app's `.env.example` (`apps/api`, `apps/web`, `apps/landing`) to `.env` and configure your settings
 2. **Database**: Set up your PostgreSQL database and update the connection string
 3. **Authentication**: Configure Better Auth providers in `apps/api/lib/auth.ts`
 4. **Optional services**: Set up OpenAI and Resend if you need AI or email functionality
 
 **If manually cloning:**
 1. **Update package names**: Change `@your-saas-starterkit` in all `package.json` files to your organization name
-2. **Environment variables**: Copy `.env.example` to `.env` and configure your settings
+2. **Environment variables**: Copy each app's `.env.example` (`apps/api`, `apps/web`, `apps/landing`) to `.env` and configure your settings
 3. **Database**: Set up your PostgreSQL database and update the connection string
 4. **Authentication**: Configure Better Auth providers in `apps/api/lib/auth.ts`
 5. **Optional services**: Set up OpenAI and Resend if you need AI or email functionality
@@ -234,10 +238,10 @@ The `Dockerfile` builds the landing site and dashboard as static output, compile
 
 ## CLI Tool
 
-This template can be scaffolded using our CLI tool: [create-your-saas-starterkit](https://github.com/JuanPabloGilA/create-your-saas-starterkit)
+This template can be scaffolded using our CLI tool: [create-your-saas-boilerplate](https://github.com/JuanPabloGilA/create-your-saas-boilerplate)
 
 ```bash
-npx create-your-saas-starterkit
+npx create-your-saas-boilerplate
 ```
 
 The CLI provides:

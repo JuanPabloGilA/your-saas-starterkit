@@ -37,32 +37,45 @@
   },
   "projectContext": {
     "stack": {
+      "landing": {
+        "framework": "Astro 7",
+        "output": "static",
+        "styling": "Tailwind CSS v4",
+        "icons": "astro-icon + @iconify-json/lucide"
+      },
       "frontend": {
         "framework": "React 19",
         "router": "TanStack Router",
         "stateManagement": "TanStack Query",
         "styling": "Tailwind CSS v4",
         "ui": "shadcn/ui + Radix UI",
-        "buildTool": "Vite 7"
+        "buildTool": "Vite 8",
+        "apiClient": "Eden Treaty (@elysiajs/eden)"
       },
       "backend": {
-        "framework": "Hono",
+        "framework": "Elysia",
         "runtime": "Bun",
         "database": "PostgreSQL",
         "orm": "Drizzle ORM",
-        "auth": "Better Auth",
-        "validation": "Zod"
+        "auth": "Better Auth (mounted via an Elysia plugin, lib/auth-plugin.ts)",
+        "validation": "Zod + Elysia's native t.Object schemas"
       },
       "tooling": {
         "monorepo": "Turborepo",
         "packageManager": "Bun",
         "linter": "Biome",
-        "typeChecker": "TypeScript 5.9"
+        "typeChecker": "TypeScript 7 (apps/landing pinned to 6.0.3 for astro check compatibility)"
+      },
+      "deployment": {
+        "target": "Single Dockerfile (oven/bun base image)",
+        "strategy": "One compiled Bun binary; Host-header dispatch serves landing or dashboard statics, /api/* goes to Elysia",
+        "note": "Nixpacks intentionally not used — it lags official Bun releases"
       }
     },
     "structure": {
-      "apps/web": "React frontend application",
-      "apps/api": "Hono backend API server",
+      "apps/landing": "Astro marketing site (root domain)",
+      "apps/web": "React dashboard SPA — auth + app screens only (app subdomain)",
+      "apps/api": "Elysia backend API server (app subdomain, /api)",
       "packages/shared": "Shared types and schemas",
       "packages/database": "Drizzle ORM schemas and migrations",
       "packages/config": "Environment configuration validation"
@@ -86,12 +99,13 @@
       "Keep API calls in separate query functions"
     ],
     "backend": [
-      "Use Hono's middleware pattern",
-      "Validate all inputs with Zod schemas",
+      "Define each route group as its own Elysia plugin, then .use() it into app.ts",
+      "Use Elysia's native t.Object(...) schema validation",
+      "Validate all inputs with Zod schemas where not covered by Elysia's own validation",
       "Use Drizzle for type-safe database queries",
       "Follow RESTful API conventions",
       "Implement proper error handling",
-      "Use Better Auth for authentication"
+      "Use Better Auth for authentication, mounted as an Elysia plugin"
     ],
     "database": [
       "Define schemas in packages/database",
