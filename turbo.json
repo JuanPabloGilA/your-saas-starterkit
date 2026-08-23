@@ -18,14 +18,17 @@
       "dependsOn": ["^type-check"]
     },
     "db:generate": {
-      "cache": false
+      "cache": false,
+      "passThroughEnv": ["DATABASE_URL"]
     },
     "db:push": {
       "cache": false,
-      "interactive": true
+      "interactive": true,
+      "passThroughEnv": ["DATABASE_URL"]
     },
     "db:migrate": {
-      "cache": false
+      "cache": false,
+      "passThroughEnv": ["DATABASE_URL"]
     }
   }
 }

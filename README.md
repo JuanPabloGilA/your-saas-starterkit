@@ -238,7 +238,9 @@ The CLI automatically handles package naming and setup. You only need to:
 docker build -t your-saas-starterkit .
 ```
 
-The `Dockerfile` builds the landing site and dashboard as static output, compiles the API into a standalone Bun binary, and runs pending migrations on boot. At runtime, the binary dispatches on the incoming `Host` header: `/api/*` goes to the Elysia app, `Host: $DASHBOARD_HOST` serves the dashboard's static files (with SPA fallback), and anything else serves the landing site (real 404s). This lets one container/port serve both your root domain and your app subdomain — point both at the same deployment and set `DASHBOARD_HOST` accordingly. Any platform that runs a Dockerfile works (Coolify, Railway, Fly, a plain VPS); Nixpacks is intentionally not used since it lags official Bun releases.
+The `Dockerfile` builds the landing site and dashboard as static output, compiles the API into a standalone Bun binary, and runs pending migrations on boot. At runtime, the binary dispatches on the incoming `Host` header: `/api/*` goes to the Elysia app, `Host: $DASHBOARD_HOST` serves the dashboard's static files (with SPA fallback), and anything else serves the landing site (real 404s). This lets one container/port serve both your root domain and your app subdomain — point both at the same deployment and set `DASHBOARD_HOST` accordingly. Any platform that runs a Dockerfile works; Nixpacks is intentionally not used since it lags official Bun releases.
+
+See [DEPLOYMENT.md](./DEPLOYMENT.md) for step-by-step guides for Coolify, Dokploy, and other Docker hosts.
 
 ## CLI Tool
 
