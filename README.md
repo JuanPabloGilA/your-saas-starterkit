@@ -77,6 +77,7 @@ cd your-project-name
 cp apps/api/.env.example apps/api/.env
 cp apps/web/.env.example apps/web/.env
 cp apps/landing/.env.example apps/landing/.env
+cp packages/database/.env.example packages/database/.env
 # Edit with your database URL and secrets
 bun run dev
 ```
@@ -102,6 +103,7 @@ bun install
 cp apps/api/.env.example apps/api/.env
 cp apps/web/.env.example apps/web/.env
 cp apps/landing/.env.example apps/landing/.env
+cp packages/database/.env.example packages/database/.env
 # Edit with your database URL and other secrets
 ```
 
@@ -212,14 +214,14 @@ bun run db:migrate
 **If using the CLI (recommended):**
 The CLI automatically handles package naming and setup. You only need to:
 
-1. **Environment variables**: Copy each app's `.env.example` (`apps/api`, `apps/web`, `apps/landing`) to `.env` and configure your settings
+1. **Environment variables**: Copy each app's `.env.example` (`apps/api`, `apps/web`, `apps/landing`, `packages/database`) to `.env` and configure your settings
 2. **Database**: Set up your PostgreSQL database and update the connection string
 3. **Authentication**: Configure Better Auth providers in `apps/api/lib/auth.ts`
 4. **Optional services**: Set up OpenAI and Resend if you need AI or email functionality
 
 **If manually cloning:**
 1. **Update package names**: Change `@your-saas-starterkit` in all `package.json` files to your organization name
-2. **Environment variables**: Copy each app's `.env.example` (`apps/api`, `apps/web`, `apps/landing`) to `.env` and configure your settings
+2. **Environment variables**: Copy each app's `.env.example` (`apps/api`, `apps/web`, `apps/landing`, `packages/database`) to `.env` and configure your settings
 3. **Database**: Set up your PostgreSQL database and update the connection string
 4. **Authentication**: Configure Better Auth providers in `apps/api/lib/auth.ts`
 5. **Optional services**: Set up OpenAI and Resend if you need AI or email functionality

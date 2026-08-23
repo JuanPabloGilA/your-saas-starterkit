@@ -15,7 +15,7 @@
     "db:generate": "turbo run db:generate",
     "db:push": "turbo run db:push",
     "db:migrate": "turbo run db:migrate",
-    "db:studio": "cd packages/db && bunx drizzle-kit studio",
+    "db:studio": "cd packages/database && bunx drizzle-kit studio",
     "clean": "turbo run clean && rm -rf node_modules",
     "start": "./prod-server",
     "prepare": "husky"
