@@ -1,0 +1,49 @@
+---
+import { Icon } from 'astro-icon/components';
+
+interface Feature {
+  icon: string;
+  title: string;
+  description: string;
+  iconColor: string;
+  iconBgColor: string;
+}
+
+interface Props {
+  title: string;
+  subtitle: string;
+  features: Feature[];
+}
+
+const { title, subtitle, features } = Astro.props;
+---
+
+<section class="py-24 px-4 sm:px-6 lg:px-8 bg-muted/20">
+  <div class="max-w-7xl mx-auto">
+    <div class="text-center mb-20">
+      <h2 class="text-4xl md:text-5xl font-logo text-foreground mb-6">{title}</h2>
+      <p class="text-xl text-muted-foreground max-w-3xl mx-auto">{subtitle}</p>
+    </div>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {
+        features.map((feature) => (
+          <div class="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg bg-card text-card-foreground rounded-xl py-6">
+            <div class="px-6 pb-4">
+              <div
+                class:list={[
+                  'w-16 h-16 rounded-2xl flex items-center justify-center mb-6 group-hover:opacity-80 transition-opacity',
+                  feature.iconBgColor,
+                ]}
+              >
+                <Icon name={feature.icon} class:list={['w-8 h-8', feature.iconColor]} />
+              </div>
+              <h3 class="text-2xl font-semibold mb-3 leading-none">{feature.title}</h3>
+              <p class="text-base leading-relaxed text-muted-foreground">{feature.description}</p>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>

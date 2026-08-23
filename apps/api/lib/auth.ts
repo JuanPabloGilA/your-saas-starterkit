@@ -1,8 +1,8 @@
-import { env } from '@your-org/config';
-import { account, session, user, verification } from '@your-org/database/schema';
+import { env } from '@your-saas-starterkit/config';
+import { db } from '@your-saas-starterkit/database';
+import { account, session, user, verification } from '@your-saas-starterkit/database/schema';
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
-import { db } from '../db';
 import { generateEmailHTML } from '../utils/email-component';
 import { resend } from './email';
 
@@ -17,11 +17,12 @@ export const auth = betterAuth({
     },
   }),
   baseURL: env.BETTER_AUTH_URL,
+  basePath: '/api/auth',
   secret: env.BETTER_AUTH_SECRET,
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: true,
-    sendResetPassword: async ({ user, url, token }) => {
+    sendResetPassword: async ({ user, url }) => {
       const html = generateEmailHTML({
         link: url,
         type: 'password-reset',
@@ -29,7 +30,7 @@ export const auth = betterAuth({
       });
 
       await resend.emails.send({
-        from: 'noreply@your-domain.com',
+        from: 'noreply@yoursaasstarterkit.com',
         to: user.email,
         subject: 'Reset your password',
         html: html,
@@ -37,7 +38,9 @@ export const auth = betterAuth({
       });
     },
   },
-  trustedOrigins: ['http://localhost:5173'],
+  trustedOrigins: Array.from(
+    new Set([env.APP_URL, env.LANDING_URL, 'http://localhost:5173', 'http://localhost:4321'])
+  ),
   session: {
     cookieCache: {
       enabled: true,
@@ -55,7 +58,7 @@ export const auth = betterAuth({
       });
 
       await resend.emails.send({
-        from: 'noreply@your-domain.com',
+        from: 'noreply@yoursaasstarterkit.com',
         to: user.email,
         subject: 'Verify your email',
         html: html,

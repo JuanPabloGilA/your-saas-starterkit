@@ -1,0 +1,21 @@
+---
+import CTA from '@/components/CTA.astro';
+import Features from '@/components/Features.astro';
+import Footer from '@/components/Footer.astro';
+import Header from '@/components/Header.astro';
+import Hero from '@/components/Hero.astro';
+import HowItWorks from '@/components/HowItWorks.astro';
+import { landingContent } from '@/content/landing-content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+
+<BaseLayout>
+  <Header />
+  <main>
+    <Hero {...landingContent.hero} />
+    <Features {...landingContent.features} />
+    <HowItWorks {...landingContent.howItWorks} />
+    <CTA {...landingContent.cta} />
+  </main>
+  <Footer companyName={landingContent.footer.companyName} currentYear={landingContent.footer.currentYear} />
+</BaseLayout>

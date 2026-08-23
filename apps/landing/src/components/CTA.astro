@@ -1,0 +1,50 @@
+---
+import { Icon } from 'astro-icon/components';
+import Button from '@/components/ui/Button.astro';
+import { appLink } from '@/lib/utils';
+
+interface Props {
+  icon: string;
+  title: string;
+  description: string;
+  primaryButtonText: string;
+  secondaryButtonText: string;
+  primaryButtonLink: string;
+  secondaryButtonLink: string;
+}
+
+const {
+  icon,
+  title,
+  description,
+  primaryButtonText,
+  secondaryButtonText,
+  primaryButtonLink,
+  secondaryButtonLink,
+} = Astro.props;
+---
+
+<section
+  class="py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-primary/10 via-background to-primary/10"
+>
+  <div class="max-w-5xl mx-auto text-center">
+    <div class="border-0 shadow-2xl bg-card text-card-foreground rounded-xl">
+      <div class="pt-16 pb-16 px-8">
+        <div class="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-8">
+          <Icon name={icon} class="w-10 h-10" />
+        </div>
+        <h2 class="text-4xl md:text-5xl font-logo mb-6">{title}</h2>
+        <p class="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto">{description}</p>
+        <div class="flex flex-col sm:flex-row gap-6 justify-center">
+          <Button size="lg" variant="secondary" href={appLink(primaryButtonLink)}>
+            {primaryButtonText}
+            <Icon name="lucide:arrow-right" class="ml-2 h-5 w-5" />
+          </Button>
+          <Button size="lg" variant="outline" href={appLink(secondaryButtonLink)}>
+            {secondaryButtonText}
+          </Button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,5 +1,3 @@
-import { BarChart3, Globe, MessageSquare, Shield, Users, Zap } from 'lucide-react';
-
 export const landingContent = {
   hero: {
     title: 'Build amazing',
@@ -19,7 +17,7 @@ export const landingContent = {
     subtitle: 'Everything you need to build, deploy, and scale your applications with confidence.',
     features: [
       {
-        icon: Shield,
+        icon: 'lucide:shield',
         title: 'Secure & Reliable',
         description:
           'Enterprise-grade security with built-in reliability features to keep your applications safe and running smoothly.',
@@ -27,7 +25,7 @@ export const landingContent = {
         iconBgColor: 'bg-primary/10',
       },
       {
-        icon: Zap,
+        icon: 'lucide:zap',
         title: 'Lightning Fast',
         description:
           'Optimized for performance with modern technologies that deliver speed and efficiency for your applications.',
@@ -35,7 +33,7 @@ export const landingContent = {
         iconBgColor: 'bg-blue-500/10',
       },
       {
-        icon: Users,
+        icon: 'lucide:users',
         title: 'Team Collaboration',
         description:
           'Work together seamlessly with your team using built-in collaboration tools and real-time updates.',
@@ -43,7 +41,7 @@ export const landingContent = {
         iconBgColor: 'bg-green-500/10',
       },
       {
-        icon: BarChart3,
+        icon: 'lucide:bar-chart-3',
         title: 'Analytics & Insights',
         description:
           'Track your application performance with detailed analytics and insights to optimize your workflow.',
@@ -51,7 +49,7 @@ export const landingContent = {
         iconBgColor: 'bg-purple-500/10',
       },
       {
-        icon: MessageSquare,
+        icon: 'lucide:message-square',
         title: '24/7 Support',
         description:
           'Get help when you need it with our dedicated support team available around the clock.',
@@ -59,7 +57,7 @@ export const landingContent = {
         iconBgColor: 'bg-orange-500/10',
       },
       {
-        icon: Globe,
+        icon: 'lucide:globe',
         title: 'Global Scale',
         description:
           'Deploy your applications worldwide with our global infrastructure and edge computing capabilities.',
@@ -95,7 +93,7 @@ export const landingContent = {
   },
 
   cta: {
-    icon: Globe,
+    icon: 'lucide:globe',
     title: 'Ready to get started?',
     description:
       'Join thousands of developers who trust our platform for their applications. Start building today.',

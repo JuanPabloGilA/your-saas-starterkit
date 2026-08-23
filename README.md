@@ -1,41 +1,45 @@
-# Modern Full-Stack Monorepo
+# Your SaaS Starter Kit
 
-A production-ready monorepo template built with Turborepo, featuring a React web application, API server, and shared packages. Perfect for building scalable full-stack applications with modern tooling.
+A production-ready monorepo template built with Turborepo, featuring an Astro marketing site, a React dashboard, an Elysia API, and shared packages. Perfect for building scalable full-stack SaaS applications with modern tooling.
 
 ## 🚀 Quick Start
 
 ```bash
-npx create-hono-react-monorepo
+npx create-your-saas-starterkit
 ```
 
 Get started in seconds with our interactive CLI tool! It will scaffold the entire monorepo with your custom configuration.
 
 ## ✨ Features
 
-- 🚀 **Modern Stack**: React 19, Hono, TypeScript, and Bun
+- 🚀 **Modern Stack**: React 19, Elysia, Astro, TypeScript, and Bun
 - 🏗️ **Monorepo**: Turborepo for efficient builds and caching
+- 🌐 **Landing + Dashboard split**: an Astro marketing site at the root domain, a React dashboard SPA at an app subdomain, sharing an origin with the API
 - 🔐 **Authentication**: Better Auth with email/password and OAuth providers
 - 🎨 **UI Components**: shadcn/ui with Tailwind CSS and dark mode
+- 📊 **Tracking pixels**: optional Meta Pixel + Google tag on the landing site, each independently env-gated
 - 📱 **Responsive**: Mobile-first design with modern UX patterns
 - 🗄️ **Database**: Drizzle ORM with PostgreSQL and migrations
 - 🤖 **AI Ready**: Optional OpenAI integration
 - 📧 **Email**: Optional Resend integration for transactional emails
-- 🔧 **Developer Experience**: Biome linting, pre-commit hooks, and type safety
-- 🚀 **Deployment Ready**: Coolify, Docker, and VPS deployment configs
+- 🔧 **Developer Experience**: Biome linting (no ESLint), pre-commit hooks, and type safety
+- 🐳 **Deployment Ready**: a single Dockerfile builds and serves all three apps
 
 ## Structure
 
 ```
 project/
 ├── apps/
-│   ├── web/                 # React web application
-│   └── api/                 # Hono API server
+│   ├── landing/              # Astro marketing site
+│   ├── web/                  # React dashboard SPA
+│   └── api/                  # Elysia API server
 ├── packages/
-│   ├── database/            # Database schema and migrations
-│   ├── shared/              # Shared types and utilities
-│   └── config/              # Environment configuration
-├── turbo.json               # Turborepo configuration
-└── package.json             # Root package.json
+│   ├── database/             # Database schema and migrations
+│   ├── shared/                # Shared types and utilities
+│   └── config/                 # Environment configuration
+├── Dockerfile                # Single-image build for all 3 apps
+├── turbo.json                # Turborepo configuration
+└── package.json               # Root package.json
 ```
 
 ## Getting Started
@@ -45,7 +49,7 @@ project/
 The fastest way to get started is using our CLI tool:
 
 ```bash
-npx create-hono-react-monorepo
+npx create-your-saas-starterkit
 ```
 
 This will:
@@ -57,10 +61,10 @@ This will:
 **Alternative package managers:**
 ```bash
 # Using npm
-npm create hono-react-monorepo
+npm create your-saas-starterkit
 
 # Using bun
-bunx create-hono-react-monorepo
+bunx create-your-saas-starterkit
 ```
 
 After creation:
@@ -82,8 +86,8 @@ If you prefer to clone the repository directly:
 
 ```bash
 # Clone the repository
-git clone https://github.com/JuanPabloGilA/hono-react-boilerplate.git
-cd hono-react-boilerplate
+git clone https://github.com/JuanPabloGilA/your-saas-starterkit.git
+cd your-saas-starterkit
 
 # Install dependencies
 bun install
@@ -100,8 +104,9 @@ cp env.example .env
 bun run dev
 
 # Start specific app
-bun run dev --filter=@your-org/web
-bun run dev --filter=@your-org/api
+bun run dev --filter=@your-saas-starterkit/landing
+bun run dev --filter=@your-saas-starterkit/web
+bun run dev --filter=@your-saas-starterkit/api
 
 # Build all apps
 bun run build
@@ -128,22 +133,29 @@ bun run db:migrate
 
 ## Apps
 
-### Web App (`apps/web`)
+### Landing (`apps/landing`)
+- Astro static site, served at the root domain (e.g. `domain.com`)
+- Zero client-side JS by default — sections are plain `.astro` components
+- Optional Meta Pixel + Google tag, each independently env-gated
+- Links to the dashboard (`/login`, `/register`) are absolute cross-domain URLs
+
+### Dashboard (`apps/web`)
 - React 19 with Vite for fast development
-- TanStack Router for type-safe routing
+- TanStack Router for type-safe routing, auth + app screens only
 - Tailwind CSS for utility-first styling
 - Radix UI components for accessibility
 - Better Auth for authentication
 - shadcn/ui component library
 - Dark/light theme support
+- Talks to the API via a fully-typed Eden Treaty client
 
 ### API (`apps/api`)
-- Hono framework for high-performance APIs
-- Better Auth for secure authentication
+- Elysia framework for high-performance APIs, served under `/api` on the dashboard's domain
+- Better Auth for secure authentication, mounted as an Elysia plugin
 - Drizzle ORM with PostgreSQL
 - AI integration with OpenAI (optional)
 - Email functionality with Resend (optional)
-- Type-safe API routes
+- Type-safe API routes, consumed via Eden Treaty from the dashboard
 
 ## Packages
 
@@ -175,13 +187,14 @@ bun run db:migrate
 
 - **Monorepo**: Turborepo for fast, cached builds
 - **Runtime**: Bun for lightning-fast package management
-- **Frontend**: React 19, Vite, TanStack Router, Tailwind CSS, shadcn/ui
-- **Backend**: Hono, Better Auth
+- **Landing**: Astro, astro-icon
+- **Dashboard**: React 19, Vite, TanStack Router, Tailwind CSS, shadcn/ui, Eden Treaty
+- **Backend**: Elysia, Better Auth
 - **Database**: PostgreSQL, Drizzle ORM
 - **AI**: OpenAI SDK (optional)
 - **Email**: Resend (optional)
 - **Type Safety**: TypeScript, Zod
-- **Linting**: Biome for fast linting and formatting
+- **Linting**: Biome for fast linting and formatting (no ESLint)
 - **Git Hooks**: Husky for pre-commit formatting
 
 ## Customization
@@ -197,7 +210,7 @@ The CLI automatically handles package naming and setup. You only need to:
 4. **Optional services**: Set up OpenAI and Resend if you need AI or email functionality
 
 **If manually cloning:**
-1. **Update package names**: Change `@your-org` in all `package.json` files to your organization name
+1. **Update package names**: Change `@your-saas-starterkit` in all `package.json` files to your organization name
 2. **Environment variables**: Copy `.env.example` to `.env` and configure your settings
 3. **Database**: Set up your PostgreSQL database and update the connection string
 4. **Authentication**: Configure Better Auth providers in `apps/api/lib/auth.ts`
@@ -213,17 +226,18 @@ The CLI automatically handles package naming and setup. You only need to:
 
 ## Deployment
 
-This template includes deployment configuration for:
-- **Coolify**: Ready-to-deploy with `nixpacks.toml`
-- **Docker**: Multi-stage Dockerfile for production builds
-- **Self-hosting**: Optimized for VPS deployment
+```bash
+docker build -t your-saas-starterkit .
+```
+
+The `Dockerfile` builds the landing site and dashboard as static output, compiles the API into a standalone Bun binary, and runs pending migrations on boot. At runtime, the binary dispatches on the incoming `Host` header: `/api/*` goes to the Elysia app, `Host: $DASHBOARD_HOST` serves the dashboard's static files (with SPA fallback), and anything else serves the landing site (real 404s). This lets one container/port serve both your root domain and your app subdomain — point both at the same deployment and set `DASHBOARD_HOST` accordingly. Any platform that runs a Dockerfile works (Coolify, Railway, Fly, a plain VPS); Nixpacks is intentionally not used since it lags official Bun releases.
 
 ## CLI Tool
 
-This template can be scaffolded using our CLI tool: [create-hono-react-monorepo](https://github.com/JuanPabloGilA/create-hono-react-monorepo)
+This template can be scaffolded using our CLI tool: [create-your-saas-starterkit](https://github.com/JuanPabloGilA/create-your-saas-starterkit)
 
 ```bash
-npx create-hono-react-monorepo
+npx create-your-saas-starterkit
 ```
 
 The CLI provides:

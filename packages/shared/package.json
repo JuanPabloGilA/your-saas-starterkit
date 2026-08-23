@@ -1,5 +1,5 @@
 {
-  "name": "@your-org/shared",
+  "name": "@your-saas-starterkit/shared",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -7,15 +7,13 @@
   "types": "./index.ts",
   "scripts": {
     "build": "tsc",
-    "lint": "eslint .",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "zod": "^3.25.76"
+    "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@types/node": "^24.10.4",
-    "eslint": "^9.39.2",
-    "typescript": "~5.8.3"
+    "@types/node": "^26.2.0",
+    "typescript": "^7.0.2"
   }
 }

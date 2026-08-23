@@ -155,6 +155,7 @@ out
 # Build outputs
 dist/
 build/
+.astro/
 
 # Compiled binaries
 *.exe

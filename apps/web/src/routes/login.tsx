@@ -45,7 +45,7 @@ function Login() {
         password,
       });
       navigate({ to: redirect });
-    } catch (error) {
+    } catch (_error) {
       setError('Invalid email or password');
     } finally {
       setIsLoading(false);
@@ -60,7 +60,7 @@ function Login() {
         provider: 'google',
         callbackURL: redirect,
       });
-    } catch (error) {
+    } catch (_error) {
       setError('Google sign in failed');
     } finally {
       setIsLoading(false);
@@ -75,7 +75,7 @@ function Login() {
         provider: 'apple',
         callbackURL: redirect,
       });
-    } catch (error) {
+    } catch (_error) {
       setError('Apple sign in failed');
     } finally {
       setIsLoading(false);

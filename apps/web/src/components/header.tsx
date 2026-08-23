@@ -14,6 +14,8 @@ import { Logo } from '@/components/ui/logo';
 import { ModeToggle } from '@/components/ui/theme-toggle';
 import { signOut, useSession } from '@/lib/auth-client';
 
+const landingUrl = import.meta.env.VITE_LANDING_URL || 'http://localhost:4321';
+
 export function Header() {
   const { data: session } = useSession();
   const router = useRouter();
@@ -23,9 +25,15 @@ export function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
-            <Link to={session ? '/dashboard' : '/'}>
-              <Logo size="sm" />
-            </Link>
+            {session ? (
+              <Link to="/dashboard">
+                <Logo size="sm" />
+              </Link>
+            ) : (
+              <a href={landingUrl}>
+                <Logo size="sm" />
+              </a>
+            )}
           </div>
 
           {session && (

@@ -3,11 +3,10 @@
     "strict": true,
     "jsx": "react-jsx",
     "jsxImportSource": "react",
-    "baseUrl": ".",
     "paths": {
-      "@your-org/config": ["./packages/config"],
-      "@your-org/database": ["./packages/database"],
-      "@your-org/shared": ["./packages/shared"]
+      "@your-saas-starterkit/config": ["./packages/config"],
+      "@your-saas-starterkit/database": ["./packages/database"],
+      "@your-saas-starterkit/shared": ["./packages/shared"]
     }
   },
   "references": [

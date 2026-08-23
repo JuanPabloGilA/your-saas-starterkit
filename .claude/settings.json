@@ -29,7 +29,7 @@
       "types": "PascalCase"
     },
     "architecture": {
-      "packageNamespace": "@your-org",
+      "packageNamespace": "@your-saas-starterkit",
       "sharedPackages": ["shared", "config", "database"],
       "preferComposition": true,
       "separateConcerns": true

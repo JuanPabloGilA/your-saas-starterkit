@@ -1,5 +1,3 @@
-import { Hono } from 'hono';
+import { Elysia } from 'elysia';
 
-export const healthRoutes = new Hono().get('/', async (c) => {
-  return c.json({ message: 'API is healthy' });
-});
+export const healthRoutes = new Elysia().get('/', () => ({ message: 'API is healthy' }));

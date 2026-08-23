@@ -1,0 +1,26 @@
+{
+  "name": "@your-saas-starterkit/landing",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "bun --bun astro dev",
+    "build": "bun --bun astro build",
+    "preview": "bun --bun astro preview",
+    "type-check": "bun --bun astro check"
+  },
+  "dependencies": {
+    "@iconify-json/lucide": "^1.2.125",
+    "@tailwindcss/vite": "^4.3.3",
+    "astro": "^7.2.4",
+    "astro-icon": "^1.2.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^3.6.0",
+    "tailwindcss": "^4.3.3"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "typescript": "6.0.3"
+  }
+}

@@ -55,7 +55,7 @@ function Register() {
         name,
         roles: ['user'],
       });
-    } catch (error) {
+    } catch (_error) {
       setError('Failed to create account');
     } finally {
       setIsLoading(false);
@@ -70,7 +70,7 @@ function Register() {
         provider: 'google',
         callbackURL: '/',
       });
-    } catch (error) {
+    } catch (_error) {
       setError('Google sign up failed');
     } finally {
       setIsLoading(false);
@@ -85,7 +85,7 @@ function Register() {
         provider: 'apple',
         callbackURL: '/',
       });
-    } catch (error) {
+    } catch (_error) {
       setError('Apple sign up failed');
     } finally {
       setIsLoading(false);

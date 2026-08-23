@@ -1,0 +1,19 @@
+---
+import Button from '@/components/ui/Button.astro';
+import { appLink } from '@/lib/utils';
+---
+
+<header class="border-b bg-background/80 backdrop-blur-sm sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center h-16">
+      <a href="/">
+        <span class="font-logo text-2xl md:text-3xl">Your logo</span>
+      </a>
+
+      <div class="flex items-center space-x-2">
+        <Button variant="ghost" href={appLink('/login')}>Sign In</Button>
+        <Button href={appLink('/register')}>Get Started</Button>
+      </div>
+    </div>
+  </div>
+</header>

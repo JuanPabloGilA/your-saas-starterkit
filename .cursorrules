@@ -1,12 +1,14 @@
-# Cursor AI Rules for Hono React Monorepo
+# Cursor AI Rules for your-saas-starterkit
 
 ## Project Overview
 This is a modern full-stack monorepo built with:
-- **Frontend**: React 19 + Vite + TanStack Router + Tailwind CSS v4
-- **Backend**: Hono + Bun + PostgreSQL + Drizzle ORM
+- **Landing**: Astro static site (root domain)
+- **Dashboard**: React 19 + Vite + TanStack Router + Tailwind CSS v4 (app subdomain)
+- **Backend**: Elysia + Bun + PostgreSQL + Drizzle ORM (app subdomain, `/api`)
 - **Monorepo**: Turborepo with Bun workspaces
 - **Auth**: Better Auth with email verification & OAuth
-- **UI**: shadcn/ui components + Radix UI primitives
+- **UI**: shadcn/ui components + Radix UI primitives (a small subset also lives as plain `.astro` components in `apps/landing`)
+- **Linting**: Biome only — no ESLint anywhere in this repo
 
 ## Code Style & Conventions
 
@@ -35,18 +37,24 @@ This is a modern full-stack monorepo built with:
 
 ### File Organization
 ```
+apps/landing/src/
+├── components/     # .astro sections + Analytics.astro (pixels)
+├── content/        # landing-content.ts (copy)
+├── layouts/        # BaseLayout.astro
+└── pages/          # File-based routes
+
 apps/web/src/
-├── components/     # Reusable UI components
-├── routes/         # TanStack Router route components
+├── components/     # Reusable UI components (dashboard only — no marketing sections)
+├── routes/         # TanStack Router route components (auth + app screens only)
 ├── hooks/          # Custom React hooks
-├── lib/            # Utilities and helpers
+├── lib/            # Utilities, auth-client, Eden API client
 └── assets/         # Static assets
 
 apps/api/
-├── routes/         # API route handlers
-├── lib/            # Auth, email, utilities
-├── db/             # Database connection
-└── index.ts        # Server entry point
+├── routes/         # Elysia route plugins
+├── lib/            # auth.ts (Better Auth config), auth-plugin.ts (Elysia mount), email
+├── app.ts          # Elysia app + route composition, exports `App` type
+└── index.ts        # Server entry — Host-header static dispatch in production
 
 packages/
 ├── database/       # Drizzle schemas
@@ -56,7 +64,7 @@ packages/
 
 ### Import Order
 1. External packages (React, etc.)
-2. Internal packages (@your-org/*)
+2. Internal packages (@your-saas-starterkit/*)
 3. Relative imports (./components, etc.)
 4. Types (import type {})
 5. Assets and styles
@@ -67,7 +75,7 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { getUserData } from './api';
-import type { User } from '@your-org/shared';
+import type { User } from '@your-saas-starterkit/shared';
 ```
 
 ## Frontend Specific
@@ -95,19 +103,19 @@ import type { User } from '@your-org/shared';
 
 ### Forms
 - Use React Hook Form for form management
-- Validate with Zod schemas from @your-org/shared
+- Validate with Zod schemas from @your-saas-starterkit/shared
 - Show user-friendly error messages
 - Implement proper loading states
 - Handle form submission errors gracefully
 
 ## Backend Specific
 
-### Hono API
-- Use Hono's routing and middleware patterns
-- Group related routes into route handlers
+### Elysia API
+- Define each route group as its own Elysia plugin (`new Elysia().get/post(...)`), then `.use()` it into `apps/api/app.ts` under a `.group('/api', ...)` sub-path
 - Return proper HTTP status codes
-- Use Zod validator middleware
-- Implement error handling middleware
+- Use Elysia's native `t.Object(...)` schema validation, not a separate validator middleware
+- Better Auth is mounted as its own Elysia plugin (`lib/auth-plugin.ts`) via `.mount(auth.handler)` — this is the documented framework-integration pattern, not an official `better-auth/elysia` package
+- The API is a pure JSON API — it does not serve static files or an SPA fallback; that's handled by Host-header dispatch in `apps/api/index.ts` at the Bun.serve level, outside the Elysia app itself
 
 ### Database
 - Define all schemas in `packages/database`
@@ -196,18 +204,26 @@ const onSubmit = async (data: UserInput) => {
 ### Database Queries
 ```typescript
 // In apps/api/routes/users/index.ts
-import { db } from '../../db';
-import { user } from '@your-org/database';
+import { db } from '@your-saas-starterkit/database';
+import { user } from '@your-saas-starterkit/database/schema';
+import { Elysia, t } from 'elysia';
 
-export const userRoutes = new Hono()
-  .get('/:id', async (c) => {
-    const userId = c.req.param('id');
-    const userData = await db.query.user.findFirst({
-      where: eq(user.id, userId),
-    });
-    return c.json(userData);
-  });
+export const userRoutes = new Elysia().get(
+  '/:id',
+  async ({ params }) => {
+    return db.query.user.findFirst({ where: eq(user.id, params.id) });
+  },
+  { params: t.Object({ id: t.String() }) }
+);
 ```
+
+## Astro Landing Specific
+
+- File-based routing: each `.astro` file in `src/pages/` is a route
+- Sections are plain `.astro` components with no client-side JS by default — only reach for `@astrojs/react` if a section genuinely needs interactivity
+- Never link to the dashboard with a relative path (`/login`) — landing and dashboard are separate deployments. Use `appLink()` from `src/lib/utils.ts`, which builds an absolute URL from `PUBLIC_APP_URL`
+- Tracking pixels live in `src/components/Analytics.astro`; each one (Meta Pixel, Google tag) is independently gated on its own env var so a fresh clone ships with no tracking configured
+- This package's `typescript` devDependency is pinned to the 6.x line, not the repo's otherwise-latest 7.x — `astro check` requires TypeScript's classic programmatic API, which the native 7.x compiler doesn't expose yet
 
 ## Commands Reference
 - `bun run dev` - Start all apps in development

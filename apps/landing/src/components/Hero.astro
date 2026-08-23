@@ -1,0 +1,71 @@
+---
+import { Icon } from 'astro-icon/components';
+import Button from '@/components/ui/Button.astro';
+import { appLink } from '@/lib/utils';
+
+interface Props {
+  title: string;
+  subtitle: string;
+  description: string;
+  primaryButtonText: string;
+  primaryButtonLink: string;
+  secondaryButtonLink: string;
+  badgeText: string;
+  features: string[];
+}
+
+const {
+  title,
+  subtitle,
+  description,
+  primaryButtonText,
+  primaryButtonLink,
+  secondaryButtonLink,
+  badgeText,
+  features,
+} = Astro.props;
+---
+
+<section class="relative pt-20 pb-32 px-4 sm:px-6 lg:px-8 overflow-hidden">
+  <div class="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-primary/5"></div>
+
+  <div class="relative max-w-7xl mx-auto text-center">
+    <span
+      class="inline-flex items-center justify-center rounded-md border px-2 py-0.5 text-xs font-medium mb-8 gap-1 border-transparent bg-secondary text-secondary-foreground text-sm px-4 py-2"
+    >
+      <Icon name="lucide:zap" class="w-4 h-4 mr-2" />
+      {badgeText}
+    </span>
+
+    <h1 class="text-6xl md:text-7xl lg:text-8xl font-logo tracking-tight mb-8 leading-tight">
+      <span class="text-foreground">{title}</span>
+      <br />
+      <span class="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+        {subtitle}
+      </span>
+    </h1>
+
+    <p class="text-xl md:text-2xl text-muted-foreground mb-12 max-w-4xl mx-auto leading-relaxed">
+      {description}
+    </p>
+
+    <div class="flex flex-col sm:flex-row gap-6 justify-center mb-16">
+      <Button size="lg" href={appLink(primaryButtonLink)}>
+        {primaryButtonText}
+        <Icon name="lucide:arrow-right" class="ml-2 h-5 w-5" />
+      </Button>
+      <Button size="lg" variant="outline" href={appLink(secondaryButtonLink)}>Sign In</Button>
+    </div>
+
+    <div class="flex items-center justify-center gap-8 text-sm text-muted-foreground">
+      {
+        features.map((feature) => (
+          <div class="flex items-center">
+            <Icon name="lucide:check-circle" class="w-4 h-4 mr-2 text-green-500" />
+            {feature}
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>

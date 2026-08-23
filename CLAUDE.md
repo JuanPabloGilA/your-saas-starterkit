@@ -1,31 +1,33 @@
 # Claude Code Assistant Guidelines
 
-This document provides guidelines for Claude Code when working on this Hono React monorepo project.
+This document provides guidelines for Claude Code when working on this full-stack SaaS starter kit.
 
 ## Project Overview
 
 This is a production-ready full-stack TypeScript monorepo boilerplate featuring:
-- **Frontend**: React 19 + Vite + TanStack Router + Tailwind CSS v4 + shadcn/ui
-- **Backend**: Hono + Bun + PostgreSQL + Drizzle ORM + Better Auth
+- **Landing**: Astro static marketing site (with optional Meta Pixel / Google tag)
+- **Dashboard**: React 19 + Vite + TanStack Router + Tailwind CSS v4 + shadcn/ui
+- **Backend**: Elysia + Bun + PostgreSQL + Drizzle ORM + Better Auth
 - **Monorepo**: Turborepo with Bun workspaces
-- **Purpose**: Template for rapidly starting new full-stack projects
+- **Purpose**: Template for rapidly starting new full-stack SaaS projects
 
 ## Working with This Codebase
 
 ### Understanding the Structure
 
-This is a **monorepo** with two main applications and three shared packages:
+This is a **monorepo** with three applications and three shared packages, deployed across two domains:
 
 **Applications:**
-- `apps/web` - React frontend (dev: http://localhost:5173)
-- `apps/api` - Hono backend API (dev: http://localhost:8000, prod: http://localhost:8000)
+- `apps/landing` - Astro marketing site, served at the root domain (dev: http://localhost:4321)
+- `apps/web` - React dashboard SPA (auth + app screens only), served at the app subdomain (dev: http://localhost:5173)
+- `apps/api` - Elysia backend API, served under `/api` on the app subdomain (dev: http://localhost:3000)
 
 **Shared Packages:**
 - `packages/database` - Drizzle ORM schemas (tables, types)
 - `packages/shared` - Zod schemas and TypeScript types used by both apps
 - `packages/config` - Environment variable validation
 
-**Key insight**: Changes to packages affect all apps. Always consider cross-package impacts.
+**Key insight**: Changes to packages affect all apps. Always consider cross-package impacts. The dashboard and API share an origin in production (same subdomain, `/api` path prefix), while the landing site is a fully separate static deployment — links between them are absolute URLs, not client-side routes.
 
 ### Development Workflow
 
@@ -91,8 +93,8 @@ This is a **monorepo** with two main applications and three shared packages:
 ### API Development
 
 **DO:**
-- Define routes in `apps/api/routes/`
-- Use Zod validation middleware
+- Define routes in `apps/api/routes/` as Elysia plugins (`new Elysia().get(...)`)
+- Use Elysia's native schema validation (`t.Object(...)`) for request bodies/params
 - Return proper HTTP status codes
 - Handle errors with try-catch
 - Use Drizzle for database queries
@@ -139,30 +141,33 @@ This is a **monorepo** with two main applications and three shared packages:
 
 ### Adding a New API Endpoint
 
-1. Create route handler in `apps/api/routes/`
-2. Define Zod schema in `packages/shared`
-3. Add route to main app in `apps/api/app.ts`
-4. Update API types if using tRPC/similar
+1. Create route handler in `apps/api/routes/` as an Elysia plugin
+2. Mount it in `apps/api/app.ts` under the relevant `.group('/api', ...)` sub-path
+3. Use Elysia's native `t.Object(...)` schema for request validation
+4. The dashboard consumes it via the Eden Treaty client (`apps/web/src/lib/api.ts`), which is fully typed from `App` in `apps/api/app.ts` — no manual client-side types needed
 5. Test with curl or HTTP client
 
 Example:
 ```typescript
-// packages/shared/schemas/todo.ts
-export const todoSchema = z.object({
-  title: z.string().min(1),
-  completed: z.boolean().default(false),
-});
-
 // apps/api/routes/todos/index.ts
-import { zValidator } from '@hono/zod-validator';
-import { todoSchema } from '@your-org/shared';
+import { Elysia, t } from 'elysia';
 
-export const todoRoutes = new Hono()
-  .post('/', zValidator('json', todoSchema), async (c) => {
-    const data = c.req.valid('json');
+export const todoRoutes = new Elysia().post(
+  '/',
+  async ({ body }) => {
     // Create todo in database
-    return c.json({ success: true });
-  });
+    return { success: true };
+  },
+  {
+    body: t.Object({
+      title: t.String({ minLength: 1 }),
+      completed: t.Optional(t.Boolean()),
+    }),
+  }
+);
+
+// apps/api/app.ts
+.group('/api', (app) => app.group('/todos', (app) => app.use(todoRoutes)))
 ```
 
 ### Adding a New React Page
@@ -221,7 +226,7 @@ export const todo = pgTable('todo', {
 
 1. Define in `packages/shared/types/` or directly in index.ts
 2. Export from `packages/shared/index.ts`
-3. Use in both apps: `import type { MyType } from '@your-org/shared'`
+3. Use in both apps: `import type { MyType } from '@your-saas-starterkit/shared'`
 
 ## Debugging Tips
 
@@ -268,15 +273,21 @@ This project uses the NEW Tailwind CSS v4 with `@tailwindcss/vite` plugin. This 
 - Import in CSS: `@import "tailwindcss";`
 
 ### Better Auth
-Two versions in use:
-- Backend (apps/api): v1.4.10
-- Frontend (apps/web): v1.4.10
+Wired into `apps/api` via an Elysia plugin (`apps/api/lib/auth-plugin.ts`) using `.mount(auth.handler)` — this is Better Auth's documented framework-integration pattern for Elysia, not an official package. `trustedOrigins` and the email sender domain are env-driven; see `packages/config/env.ts`.
 
 ### shadcn/ui
 Components are **copied** into the project, not imported from a package. This means:
 - Components in `apps/web/src/components/ui/`
+- A small subset (`Button`) is also reimplemented as plain `.astro` components in `apps/landing/src/components/ui/` for the marketing site — port additional primitives there only if a landing section actually needs them
 - Can be modified freely
 - Updates require manual re-copying
+
+### Astro Landing (apps/landing)
+- File-based routing in `src/pages/` — each `.astro` file is a route
+- Sections (`Hero`, `Features`, etc.) are plain `.astro` components with zero client-side JS by default; only reach for a React island (`@astrojs/react`) if a section genuinely needs interactivity
+- Links to the dashboard (`/login`, `/register`) are absolute cross-domain URLs built via `appLink()` in `src/lib/utils.ts`, driven by `PUBLIC_APP_URL` — never relative paths, since landing and dashboard are separate deployments
+- Tracking pixels (Meta Pixel, Google tag) live in `src/components/Analytics.astro`, each independently gated on its own env var (`PUBLIC_META_PIXEL_ID`, `PUBLIC_GA_ID`) so a fresh clone ships with no tracking configured
+- `typescript` is pinned to the 6.x line in this package specifically (not the repo-wide latest) because `astro check` doesn't yet support TypeScript's native/7.x compiler — see the root `package.json` for the version used elsewhere
 
 ### Drizzle ORM
 - Development: Use `db:push` to sync schema quickly

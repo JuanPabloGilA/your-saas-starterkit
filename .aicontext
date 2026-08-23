@@ -1,29 +1,38 @@
-# AI Context File for Hono React Monorepo
+# AI Context File for your-saas-starterkit
 
 ## Quick Project Summary
-Full-stack TypeScript monorepo with React 19 frontend, Hono backend, PostgreSQL database, and Turborepo orchestration.
+Full-stack TypeScript monorepo: an Astro marketing site, a React 19 dashboard, an Elysia API, PostgreSQL, and Turborepo orchestration. Deployed as one Docker image serving two domains (root domain = landing, app subdomain = dashboard + API).
 
 ## Technology Stack
 
-### Frontend (apps/web)
-- React 19.2.3 with TypeScript
-- Vite 7.3.0 for building
-- TanStack Router 1.145.7 (type-safe routing)
-- TanStack Query 5.90.16 (server state)
-- Tailwind CSS 4.1.18 (styling)
+### Landing (apps/landing)
+- Astro 7.2.4, static output, zero client-side JS by default
+- astro-icon + @iconify-json/lucide (icons)
+- Tailwind CSS 4 via @tailwindcss/vite
+- TypeScript pinned to 6.0.3 in this package only — `astro check` doesn't yet support TS's native 7.x compiler
+- Meta Pixel + Google tag, both optional and env-gated (`src/components/Analytics.astro`)
+
+### Dashboard (apps/web)
+- React 19.2.8 with TypeScript 7.0.2
+- Vite 8.2.2 for building
+- TanStack Router 1.170.32 (type-safe routing)
+- TanStack Query 5.102.2 (server state)
+- Tailwind CSS 4.3.3 (styling)
 - shadcn/ui + Radix UI (components)
-- React Hook Form 7.70.0 + Zod validation
-- Better Auth 1.4.10 (client)
+- React Hook Form + Zod validation
+- Better Auth 1.7.1 (client)
+- Eden Treaty (`@elysiajs/eden`) for a fully-typed API client against `apps/api`'s `App` type
 
 ### Backend (apps/api)
-- Hono 4.11.3 (web framework)
+- Elysia 1.4.29 (web framework)
 - Bun (runtime)
 - PostgreSQL (database)
-- Drizzle ORM 0.45.1 (database queries)
-- Better Auth 1.4.10 (authentication)
-- Zod 4.3.5 (validation)
-- Vercel AI SDK 6.0.11 (optional AI features)
-- Resend 6.6.0 (email)
+- Drizzle ORM 0.45.2 (database queries)
+- Better Auth 1.7.1 (authentication), mounted via an Elysia plugin (`lib/auth-plugin.ts`)
+- @elysiajs/cors (trusted-origins-driven CORS)
+- Zod 4.4.3 (validation)
+- Vercel AI SDK 7.0.77 (optional AI features)
+- Resend (email)
 
 ### Shared Packages
 - packages/database: Drizzle schemas
@@ -31,38 +40,42 @@ Full-stack TypeScript monorepo with React 19 frontend, Hono backend, PostgreSQL 
 - packages/config: Environment configuration
 
 ### Tooling
-- Turborepo 2.7.3 (monorepo)
-- Bun 1.1.0 (package manager)
-- Biome 2.3.11 (linter/formatter)
-- TypeScript 5.9.3
+- Turborepo 2.10.11 (monorepo)
+- Bun 1.4.0 (package manager)
+- Biome 2.5.10 (linter/formatter — no ESLint anywhere in this repo; `.astro` files are excluded from Biome's scope since it doesn't parse Astro templates, and are checked by `astro check` instead)
+- TypeScript 7.0.2 everywhere except `apps/landing` (pinned to 6.0.3, see above)
 - Husky 9.1.7 (git hooks)
 
 ## Project Structure
 ```
-hono-react-boilerplate/
+your-saas-starterkit/
 ├── apps/
-│   ├── web/               # React frontend (port 5173)
+│   ├── landing/            # Astro marketing site (port 4321)
+│   │   └── src/
+│   │       ├── components/   # Sections + Analytics.astro (pixels)
+│   │       ├── content/       # landing-content.ts (copy)
+│   │       ├── layouts/        # BaseLayout.astro
+│   │       └── pages/           # File-based routes
+│   ├── web/                # React dashboard SPA — auth + app screens only (port 5173)
 │   │   ├── src/
 │   │   │   ├── components/  # UI components
-│   │   │   ├── routes/      # TanStack Router pages
-│   │   │   ├── lib/         # Utilities
+│   │   │   ├── routes/      # TanStack Router pages (login/register/dashboard/etc.)
+│   │   │   ├── lib/         # Utilities, auth-client, Eden API client
 │   │   │   └── main.tsx     # Entry point
 │   │   └── vite.config.ts
-│   └── api/               # Hono backend (port 8000)
-│       ├── routes/         # API endpoints
-│       │   ├── health/
-│       │   ├── auth/
-│       │   └── ai/
-│       ├── lib/            # Auth, email utilities
-│       ├── db/             # Database connection
-│       └── index.ts        # Server entry
+│   └── api/                # Elysia backend (port 3000)
+│       ├── routes/         # API endpoints (health, ai)
+│       ├── lib/             # auth.ts (Better Auth config), auth-plugin.ts (Elysia mount)
+│       ├── app.ts           # Elysia app + route composition, exports `App` type
+│       └── index.ts         # Server entry — also does Host-header static dispatch in prod
 ├── packages/
 │   ├── database/          # Drizzle schemas
-│   │   └── schema.ts      # User, Session, Account tables
+│   │   └── schema.ts      # User, Session, Account, Verification tables
 │   ├── shared/            # Shared types
 │   │   └── index.ts       # Zod schemas, types
 │   └── config/            # Environment config
 │       └── index.ts       # Env validation
+├── Dockerfile              # Single-image build for all 3 apps
 ├── turbo.json             # Turborepo config
 ├── biome.json             # Linter config
 └── package.json           # Root workspace
@@ -104,14 +117,19 @@ hono-react-boilerplate/
 Required in .env:
 - DATABASE_URL: PostgreSQL connection string
 - BETTER_AUTH_SECRET: Auth secret key
-- BETTER_AUTH_URL: Auth callback URL (http://localhost:8000)
-- PORT: API port (default: 8000)
+- BETTER_AUTH_URL: Auth callback URL (http://localhost:3000 in dev)
+- PORT: API port (default: 3000)
+- APP_URL: Dashboard's public origin — feeds Better Auth's trustedOrigins and the API's CORS allowlist
+- LANDING_URL: Landing site's public origin — same purpose as APP_URL
+- DASHBOARD_HOST: Host header value used to distinguish the dashboard from the landing site in production (see `apps/api/index.ts`)
 
 Optional:
 - OPENAI_API_KEY: For AI features
 - RESEND_API_KEY: For email sending
 - GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET: OAuth
 - APPLE_CLIENT_ID, APPLE_CLIENT_SECRET: OAuth
+- (apps/landing) PUBLIC_META_PIXEL_ID, PUBLIC_GA_ID: tracking pixels, each independently optional
+- (apps/web) VITE_API_URL, VITE_LANDING_URL: escape hatches for pointing a local dashboard build at a different API/landing origin than the default same-origin/localhost assumption
 
 ## Common Tasks
 
@@ -147,16 +165,16 @@ bun add -w package-name
 ### API Route Pattern
 ```typescript
 // apps/api/routes/users/index.ts
-import { Hono } from 'hono';
-import { zValidator } from '@hono/zod-validator';
-import { userSchema } from '@your-org/shared';
+import { Elysia, t } from 'elysia';
 
-export const userRoutes = new Hono()
-  .post('/', zValidator('json', userSchema), async (c) => {
-    const data = c.req.valid('json');
+export const userRoutes = new Elysia().post(
+  '/',
+  async ({ body }) => {
     // Handle request
-    return c.json({ success: true });
-  });
+    return { success: true };
+  },
+  { body: t.Object({ email: t.String(), name: t.String() }) }
+);
 ```
 
 ### Frontend Query Pattern
@@ -179,7 +197,7 @@ const { data, isLoading } = useQuery({
 ```typescript
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { userSchema } from '@your-org/shared';
+import { userSchema } from '@your-saas-starterkit/shared';
 
 const form = useForm({
   resolver: zodResolver(userSchema),
@@ -189,12 +207,12 @@ const form = useForm({
 ## Important Conventions
 
 ### Package Namespace
-All workspace packages use `@your-org/` namespace:
-- @your-org/web
-- @your-org/api
-- @your-org/database
-- @your-org/shared
-- @your-org/config
+All workspace packages use `@your-saas-starterkit/` namespace:
+- @your-saas-starterkit/web
+- @your-saas-starterkit/api
+- @your-saas-starterkit/database
+- @your-saas-starterkit/shared
+- @your-saas-starterkit/config
 
 When scaffolding with CLI, this gets replaced with user's org name.
 
@@ -218,28 +236,29 @@ When scaffolding with CLI, this gets replaced with user's org name.
 
 ### Production Build
 ```bash
-bun run build        # Build all packages
-./build.sh           # Create production binary
+docker build -t your-saas-starterkit .
 ```
 
-The build.sh script:
-1. Builds the frontend with Vite
-2. Copies built frontend to API's public directory
-3. Compiles API as standalone Bun binary
-4. Output: `prod-server` executable
+The `Dockerfile` (single-stage, `oven/bun` base image):
+1. Builds the landing site (Astro) and dashboard (Vite) as static output
+2. Compiles the API into a standalone Bun binary (`bun build --compile`)
+3. At boot, runs `drizzle-kit migrate` then starts the binary
+4. The binary itself does Host-header dispatch (`apps/api/index.ts`): `/api/*` → the Elysia app, `Host: $DASHBOARD_HOST` → the dashboard's static files (with SPA fallback), anything else → the landing site's static files (real 404s, no fallback)
+
+This lets one container/port serve both the root domain and the app subdomain — point both domains at the same deployment (Coolify, Traefik, etc.) and set `DASHBOARD_HOST` accordingly.
 
 ### Deployment Targets
-- Coolify (nixpacks.toml configured)
-- Docker
-- Any platform supporting Bun binaries
+- Any platform that runs a Dockerfile
+- Nixpacks is intentionally **not** used — it lags official Bun releases
 
 ## Known Issues / Gotchas
 
 1. **Tailwind CSS v4**: Uses new @tailwindcss/vite plugin, not postcss
-2. **Better Auth version**: API uses different version than frontend (1.4.10 vs 1.2.12)
+2. **TypeScript split**: Everything is on 7.0.2 except `apps/landing`, pinned to 6.0.3 because `astro check` doesn't support TS's native compiler yet
 3. **Bun vs npm**: Prefer bun for all operations
-4. **Drizzle migrations**: Use db:push in dev, db:migrate in production
+4. **Drizzle migrations**: Use db:push in dev, db:migrate in production — always run `db:generate` after a schema change, even one that looks trivial (a missed migration file is invisible until `drizzle-kit migrate` runs against a real environment)
 5. **shadcn/ui**: Components are copied, not imported from package
+6. **Biome + Astro**: Biome doesn't parse `.astro` template sections, so `.astro` files are excluded from its lint scope (`biome.json`) — `astro check` is the source of truth for those files
 
 ## Testing Strategy
 - Unit tests: For utilities and helpers

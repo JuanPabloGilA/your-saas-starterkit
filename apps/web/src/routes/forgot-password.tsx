@@ -37,7 +37,7 @@ function ForgotPassword() {
         redirectTo: `${window.location.origin}/reset-password`,
       });
       setIsSubmitted(true);
-    } catch (error) {
+    } catch (_error) {
       setError('Failed to send reset email. Please try again.');
     } finally {
       setIsLoading(false);

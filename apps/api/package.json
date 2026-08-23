@@ -1,34 +1,37 @@
 {
-  "name": "@your-org/api",
+  "name": "@your-saas-starterkit/api",
   "private": true,
   "version": "1.0.0",
   "type": "module",
+  "exports": {
+    ".": "./index.ts",
+    "./app": "./app.ts"
+  },
   "scripts": {
     "dev": "bun run --hot index.ts",
     "build": "bun build index.ts --outdir dist --target bun",
     "start": "bun index.ts",
-    "lint": "eslint .",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@ai-sdk/openai": "^3.0.4",
-    "@hono/zod-validator": "^0.7.6",
-    "@your-org/config": "workspace:*",
-    "@your-org/database": "workspace:*",
-    "@your-org/shared": "workspace:*",
-    "ai": "^6.0.11",
-    "better-auth": "^1.4.10",
-    "hono": "^4.11.3",
-    "pg": "^8.16.3",
-    "resend": "^6.6.0",
-    "zod": "^4.3.5"
+    "@ai-sdk/openai": "^4.0.46",
+    "@elysiajs/cors": "^1.4.2",
+    "@elysiajs/eden": "^1.4.9",
+    "@your-saas-starterkit/config": "workspace:*",
+    "@your-saas-starterkit/database": "workspace:*",
+    "@your-saas-starterkit/shared": "workspace:*",
+    "ai": "^7.0.77",
+    "better-auth": "^1.7.1",
+    "elysia": "^1.4.29",
+    "pg": "^8.23.0",
+    "resend": "^6.22.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@types/bun": "^1.3.5",
-    "@types/node": "^25.0.3",
-    "@types/pg": "^8.16.0",
-    "drizzle-kit": "^0.31.8",
-    "eslint": "^9.39.2",
-    "typescript": "^5.9.3"
+    "@types/bun": "^1.4.0",
+    "@types/node": "^26.2.0",
+    "@types/pg": "^8.23.1",
+    "drizzle-kit": "^0.31.10",
+    "typescript": "^7.0.2"
   }
 }

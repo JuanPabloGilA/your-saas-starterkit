@@ -65,7 +65,7 @@ function RouteComponent() {
       if (error) {
         setError(error.message as string);
       }
-    } catch (err) {
+    } catch (_err) {
       setError('Failed to reset password. Please try again.');
     } finally {
       setLoading(false);

@@ -7,15 +7,15 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "allowJs": true,
+    "types": ["node", "bun"],
     "strict": true,
     "composite": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "baseUrl": ".",
     "paths": {
-      "@your-org/config": ["../../packages/config"],
-      "@your-org/database": ["../../packages/database"],
-      "@your-org/shared": ["../../packages/shared"]
+      "@your-saas-starterkit/config": ["../../packages/config"],
+      "@your-saas-starterkit/database": ["../../packages/database"],
+      "@your-saas-starterkit/shared": ["../../packages/shared"]
     }
   },
   "include": ["**/*.ts", "../../packages/**/*.ts"],
