@@ -25,6 +25,10 @@ COPY apps/landing/package.json apps/landing/package.json
 COPY packages/database/package.json packages/database/package.json
 COPY packages/shared/package.json packages/shared/package.json
 COPY packages/config/package.json packages/config/package.json
+# HUSKY=0 skips husky's install hook — the build context has no .git
+# (excluded via .dockerignore), so the hook would otherwise fail to find
+# one and print a confusing (harmless, but noisy) error on every build.
+ENV HUSKY=0
 RUN bun install
 
 COPY . .
@@ -32,8 +36,15 @@ COPY . .
 ENV NODE_ENV=production
 ENV PORT=3000
 
-RUN bun run build --filter=@your-saas-starterkit/web && \
-    bun run build --filter=@your-saas-starterkit/landing && \
+# Directory filters, not package-name filters: this Dockerfile ships as
+# part of the your-saas-starterkit template, and the CLI scaffolding tool
+# renames every workspace's package.json "name" field but only rewrites
+# files with an extension in FILE_PATTERNS (.json/.ts/.tsx/.sh/.toml/.md)
+# — Dockerfile has none, so a --filter=@your-saas-starterkit/web here
+# would silently go stale the moment someone scaffolds under a different
+# org name. ./apps/web is a path, immune to the rename either way.
+RUN bun run build --filter=./apps/web && \
+    bun run build --filter=./apps/landing && \
     mkdir -p /app/_static/dashboard /app/_static/landing && \
     cp -r apps/web/dist/* /app/_static/dashboard/ && \
     cp -r apps/landing/dist/* /app/_static/landing/ && \
